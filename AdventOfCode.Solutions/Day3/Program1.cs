@@ -1,13 +1,8 @@
-﻿using AdventOfCode.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AdventOfCode.Solutions.Services;
 
-namespace AdventOfCode.Day3
+namespace AdventOfCode.Solutions.Day3
 {
-    public class Program
+    public class Program1
     {
         public const string InputDirectory = "Day3";
 
@@ -24,22 +19,16 @@ namespace AdventOfCode.Day3
         public static (int, int, int) Solve(IEnumerable<string> lines)
         {
             var charLines = lines.Select(line => line.ToCharArray()).ToArray();
+            var nDigits = charLines[0].Length;
 
             var charColumns = Enumerable
-                .Range(0, charLines[0].Length)
+                .Range(0, nDigits)
                 .Select(digit => charLines.Select(charLine => charLine[digit]));
 
-            var bestChars = charColumns.Select(cs => cs.GroupBy(c => c).OrderBy(g => g.Count()).First().First());
-            var bestBits = bestChars.Select(c => c == '1' ? 1 : 0).ToArray();
+            var bestChars = charColumns.Select(cs => cs.GroupBy(c => c).OrderBy(g => g.Count()).First().First()).ToArray();
 
-            int gamma = 0;
-            for (int i = 0; i < bestBits.Count(); i++)
-            {
-                gamma <<= 1;
-                gamma |= bestBits[i];
-            }
-
-            int ones = (int)Math.Pow(2, bestBits.Count()) - 1;
+            int gamma = Convert.ToInt32(new string(bestChars), 2);
+            int ones = (int)Math.Pow(2, nDigits) - 1;
             int epsilon = ones ^ gamma;
 
             return (gamma, epsilon, gamma * epsilon);
