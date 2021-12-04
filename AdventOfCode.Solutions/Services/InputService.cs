@@ -17,5 +17,14 @@ namespace AdventOfCode.Solutions.Services
             Console.WriteLine($"Reading input from {file}");
             return File.ReadAllLines(file);
         }
+
+        public static Task<string> ReadAllTextAsync(string directory)
+        {
+            var file = Path.Combine(Directory.GetCurrentDirectory(), directory, InputFilename);
+
+            Console.WriteLine($"Reading input from {file}");
+            return File.ReadAllTextAsync(file);
+        }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using AdventOfCode.Solutions.Services;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Solutions.Day2
 {
@@ -9,43 +10,45 @@ namespace AdventOfCode.Solutions.Day2
 
         public const string Pattern = @"(forward (?<forwardNo>\d*))|(down (?<downNo>\d*))|(up (?<upNo>\d*))|\n";
 
-        public static async Task Main()
+        public static void Main()
         {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), InputDirectory, InputFilename);
-            var regex = new Regex(Pattern);
-
-            Console.WriteLine($"Reading input from {file}");
-            var text = await File.ReadAllTextAsync(file);
-
-            var matches = regex.Matches(text).ToList();
-
-            var tuples = matches
-                .Select(match => new
-                {
-                    Forward = ParseOrDefault(match.Groups["forwardNo"].Value),
-                    Down = ParseOrDefault(match.Groups["downNo"].Value),
-                    Up = ParseOrDefault(match.Groups["upNo"].Value)
-                });
-
-            int forward = 0;
-            int depth = 0;
-            int aim = 0;
-            foreach (var tuple in tuples)
-            {
-                forward += tuple.Forward;
-                depth += aim * tuple.Forward;
-                aim += tuple.Down - tuple.Up;
-            }
-
-            Console.WriteLine($"Forward: {forward}");
-            Console.WriteLine($"Depth: {depth}");
-            Console.WriteLine($"Aim: {aim}");
-            Console.WriteLine($"Forward x Depth = {forward * depth}");
+            MainAsync().GetAwaiter().GetResult();
         }
 
-        public static int ParseOrDefault(string input)
+        public static async Task MainAsync()
         {
-            return !string.IsNullOrEmpty(input) ? int.Parse(input) : 0;
+            var text = await Input.ReadAllTextAsync(InputDirectory);
+
+            var sub1 = new Problem1Submarine();
+            Solve(text, sub1);
+            Dump(sub1);
+
+            var sub2 = new Problem2Submarine();
+            Solve(text, sub2);
+            Dump(sub2);
+        }
+
+        public static void Solve(string input, Submarine submarine)
+        {
+            var regex = new Regex(Pattern);
+
+            var tuples = regex
+                .Matches(input)
+                .Select(match => Instruction.CreateFrom(match));
+
+            foreach (var tuple in tuples)
+            {
+                submarine.Move(tuple);
+            }
+        }
+
+        public static void Dump(Submarine submarine)
+        {
+            Console.WriteLine($"Horizontal: {submarine.Horizontal}");
+            Console.WriteLine($"Depth: {submarine.Depth}");
+            Console.WriteLine($"Aim: {submarine.Aim}");
+            Console.WriteLine($"Forward x Depth = {submarine.Horizontal * submarine.Depth}");
+            Console.WriteLine();
         }
     }
 }
