@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Day2
+namespace AdventOfCode.Day2
 {
     public class Program
     {
@@ -22,9 +22,9 @@ namespace Day2
             var tuples = matches
                 .Select(match => new
                 {
-                    Forward = ParseOrDefault(match.Groups["forwardNo"]?.Value),
-                    Down = ParseOrDefault(match.Groups["downNo"]?.Value),
-                    Up = ParseOrDefault(match.Groups["upNo"]?.Value)
+                    Forward = ParseOrDefault(match.Groups["forwardNo"].Value),
+                    Down = ParseOrDefault(match.Groups["downNo"].Value),
+                    Up = ParseOrDefault(match.Groups["upNo"].Value)
                 });
 
             int forward = 0;
