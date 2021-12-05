@@ -1,9 +1,4 @@
 ﻿using AdventOfCode.Solutions.Day4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace AdventOfCode.Tests
@@ -33,16 +28,16 @@ namespace AdventOfCode.Tests
         };
 
         [Fact]
-        public void ProgramSolve_Problem1()
+        public void SolverSolve_Problem1()
         {
-            var (win, hits) = Program.Solve(moves, boards, Program.Problem1);
+            var (win, hits) = Solver.Solve(moves, boards, Program.Problem1);
             Assert.Equal(4512, win * hits);
         }
 
         [Fact]
-        public void ProgramSolve_Problem2()
+        public void SolverSolve_Problem2()
         {
-            var (win, hits) = Program.Solve(moves, boards, Program.Problem2);
+            var (win, hits) = Solver.Solve(moves, boards, Program.Problem2);
             Assert.Equal(1924, win * hits);
         }
 
