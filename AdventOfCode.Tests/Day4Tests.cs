@@ -33,10 +33,17 @@ namespace AdventOfCode.Tests
         };
 
         [Fact]
-        public void Program1Solve()
+        public void ProgramSolve_Problem1()
         {
-            var (win, hits) = Program1.Solve(moves, boards);
+            var (win, hits) = Program.Solve(moves, boards, Program.Problem1);
             Assert.Equal(4512, win * hits);
+        }
+
+        [Fact]
+        public void ProgramSolve_Problem2()
+        {
+            var (win, hits) = Program.Solve(moves, boards, Program.Problem2);
+            Assert.Equal(1924, win * hits);
         }
 
     }
