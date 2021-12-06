@@ -26,7 +26,7 @@ namespace AdventOfCode.Solutions.Day5
 
         private Line(int x1, int y1, int x2, int y2)
         {
-            var count = Math.Max(x2 - x1 + 1, Math.Abs(y2 - y1) + 1);
+            var count = Math.Max(x2 - x1, Math.Abs(y2 - y1)) + 1;
 
             Points = RangeOrRepeat(x1, x2, count)
                 .Zip(RangeOrRepeat(y1, y2, count))
@@ -69,7 +69,10 @@ namespace AdventOfCode.Solutions.Day5
 
         public IEnumerable<FieldPoint> Points()
         {
-            return Lines.SelectMany(l => l.Points).GroupBy(pt => pt).Select(g => new FieldPoint {Point = g.Key, Count = g.Count() });
+            return Lines
+                .SelectMany(l => l.Points)
+                .GroupBy(pt => pt)
+                .Select(g => new FieldPoint {Point = g.Key, Count = g.Count() });
         }
 
         public class FieldPoint
