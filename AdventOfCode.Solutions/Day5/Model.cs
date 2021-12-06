@@ -2,7 +2,7 @@
 
 namespace AdventOfCode.Solutions.Day5
 {
-    internal class Point
+    public struct Point
     {
         public int X { get; init; }
         public int Y { get; init; }
@@ -14,30 +14,36 @@ namespace AdventOfCode.Solutions.Day5
         }
     }
 
-    internal class Line
+    public class Line
     {
         private static Regex _regex = new Regex(@"(?<x1>\d+),(?<y1>\d+) -> (?<x2>\d+),(?<y2>\d+)");
 
-        public Point Start { get; init; }
-        public Point End { get; init; }
+        public IEnumerable<Point> Points { get; init; }
 
-        public bool IsHorizontal => Start.Y == End.Y;
+        public bool IsHorizontal { get; init; }
 
-        public bool IsVertical => Start.X == End.X;
+        public bool IsVertical { get; init; }
 
         private Line(int x1, int y1, int x2, int y2)
         {
-            Start = new Point (x1, y1);
-            End = new Point (x2, y2);
+            var count = Math.Max(x2 - x1 + 1, Math.Abs(y2 - y1) + 1);
+
+            Points = RangeOrRepeat(x1, x2, count)
+                .Zip(RangeOrRepeat(y1, y2, count))
+                .Select(pt => new Point(pt.First, pt.Second))
+                .ToList();
+
+            IsHorizontal = y1 == y2;
+            IsVertical = x1 == x2;
         }
 
-        public bool Intersects(int x, int y)
+        private IEnumerable<int> RangeOrRepeat(int start, int end, int count)
         {
-            return (x == Start.X && Start.Y <= y && y <= End.Y)
-                || (y == Start.Y && Start.X <= x && x <= End.X);
+            int sign = Math.Sign(end - start);
+            return Enumerable.Range(0, count).Select(n => start + sign * n);
         }
 
-        public static Line? Parse(string input)
+        public static Line Parse(string input)
         {
             var match = _regex.Match(input);
 
@@ -46,9 +52,7 @@ namespace AdventOfCode.Solutions.Day5
             var y1 = int.Parse(match.Groups["y1"].Value);
             var y2 = int.Parse(match.Groups["y2"].Value);
 
-            var flipped = x2 < x1 || y2 < y1;
-
-            return flipped
+            return x2 < x1
                 ? new Line(x2, y2, x1, y1)
                 : new Line(x1, y1, x2, y2);
         }
@@ -58,29 +62,20 @@ namespace AdventOfCode.Solutions.Day5
     {
         public IEnumerable<Line> Lines { get; init; }
 
-        public Point Start { get; init; }
-
-        public Point End { get; init; }
-
-        public int Width => End.X - Start.X + 1;
-
-        public int Height => End.Y - Start.Y + 1;
-
         public Field(IEnumerable<Line> lines)
         {
-            var minX = lines.Select(l => l.Start.X).Min();
-            var minY = lines.Select(l => l.Start.Y).Min();
-            var maxX = lines.Select(l => l.End.X).Max();
-            var maxY = lines.Select(l => l.End.Y).Max();
-
-            Start = new Point(minX, minY);
-            End = new Point(maxX, maxY);
             Lines = lines.ToList();
         }
 
-        public int Read(int x, int y)
+        public IEnumerable<FieldPoint> Points()
         {
-            return Lines.Where(l => l.Intersects(x, y)).Count();
+            return Lines.SelectMany(l => l.Points).GroupBy(pt => pt).Select(g => new FieldPoint {Point = g.Key, Count = g.Count() });
+        }
+
+        public class FieldPoint
+        {
+            public Point Point { get; init; }
+            public int Count { get; init; }
         }
     }
 }

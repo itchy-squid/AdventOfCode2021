@@ -19,8 +19,15 @@ namespace AdventOfCode.Tests
         [Fact]
         void ProgramSolve_Problem1()
         {
-            var result = Program.Solve(input.Split("\r\n"));
+            var result = Program.Solve(input.Split("\r\n"), Program.Problem1);
             Assert.Equal(5, result);
+        }
+
+        [Fact]
+        void ProgramSolve_Problem2()
+        {
+            var result = Program.Solve(input.Split("\r\n"), Program.Problem2);
+            Assert.Equal(12, result);
         }
     }
 }
