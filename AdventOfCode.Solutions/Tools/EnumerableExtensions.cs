@@ -34,7 +34,7 @@ namespace AdventOfCode.Solutions.Tools
             where TKey : struct 
             where TValue : struct
         {
-            IDefaultDictionary<TKey, TValue> dict = new DefaultDictionary<TKey, TValue>();
+            IDefaultDictionary<TKey, TValue> dict = new DefaultDictionary<TKey, TValue>(() => default);
             foreach(var element in source)
             {
                 dict[keySelector(element)] = valueSelector(element);

@@ -4,7 +4,6 @@ namespace AdventOfCode.Solutions.DataStructures
 {
     public interface IDefaultDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
         where TKey : struct
-        where TValue : struct
     {
         TValue this[TKey key] {get; set;}
 
@@ -13,12 +12,13 @@ namespace AdventOfCode.Solutions.DataStructures
 
     public class DefaultDictionary<TKey, TValue> : IDefaultDictionary<TKey, TValue>
         where TKey : struct
-        where TValue : struct
     {
+        private readonly Func<TValue> _defaultSelector;
         private readonly Dictionary<TKey, TValue> _dictionary;
 
-        public DefaultDictionary()
+        public DefaultDictionary(Func<TValue> defaultSelector)
         {
+            _defaultSelector = defaultSelector;
             _dictionary = new Dictionary<TKey, TValue>();
         }
 
@@ -26,13 +26,13 @@ namespace AdventOfCode.Solutions.DataStructures
         {
             get
             {
-                return _dictionary.TryGetValue(key, out TValue val) ? val : default;
+                return _dictionary.TryGetValue(key, out TValue val) ? val : _defaultSelector();
             }
             set
             {
                 if (!_dictionary.ContainsKey(key))
                 {
-                    _dictionary.Add(key, default);
+                    _dictionary.Add(key, _defaultSelector());
                 }
                 _dictionary[key] = value; 
             }
