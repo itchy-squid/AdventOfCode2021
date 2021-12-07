@@ -1,9 +1,4 @@
-﻿using AdventOfCode.Solutions.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AdventOfCode.Solutions.Tools;
 
 namespace AdventOfCode.Solutions.Day6
 {
@@ -26,30 +21,31 @@ namespace AdventOfCode.Solutions.Day6
 
         public static long Solve(IEnumerable<int> fish, int nDays)
         {
-            var fishCounts = fish.GroupBy(n => n).OrderByDescending(n => n.Key).ToDictionary(n => n.Key, n => (long) n.Count());
+            var fishCountsByAge = fish.GroupBy(n => n).OrderByDescending(n => n.Key).ToDictionary(n => n.Key, n => (long)n.Count());
 
-            for(int j = 0; j <= MaxGestationPeriod; j++)
+            for (int j = 0; j <= MaxGestationPeriod; j++)
             {
-                if(!fishCounts.TryGetValue(j, out var _))
+                if (!fishCountsByAge.TryGetValue(j, out var _))
                 {
-                    fishCounts.Add(j, 0);
+                    fishCountsByAge.Add(j, 0);
                 }
             }
 
-            for(int i = 0; i < nDays; i++)
+            for (int i = 0; i < nDays; i++)
             {
                 long lastValue = 0;
                 for(int j = MaxGestationPeriod; j>= 0; j--)
                 {
-                    var temp = fishCounts[j];
-                    fishCounts[j] = lastValue;
-                    lastValue = temp;                    
+                    //(fishCountsByAge[j], lastValue) = (lastValue, fishCountsByAge[j]);
+                    var temp = fishCountsByAge[j];
+                    fishCountsByAge[j] = lastValue;
+                    lastValue = temp;
                 }
-                fishCounts[MaxGestationPeriod] = lastValue;
-                fishCounts[6] += lastValue;
+                fishCountsByAge[MaxGestationPeriod] = lastValue;
+                fishCountsByAge[6] += lastValue;
             }
 
-            return fishCounts.Values.Aggregate((a, b) => a + b);
+            return fishCountsByAge.Values.Aggregate((a, b) => a + b);
         }
 
         public static void Dump(int nDays, long result)

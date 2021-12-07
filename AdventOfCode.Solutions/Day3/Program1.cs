@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Solutions.Services;
+﻿using AdventOfCode.Solutions.Tools;
 
 namespace AdventOfCode.Solutions.Day3
 {

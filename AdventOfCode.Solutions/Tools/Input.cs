@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Solutions.Services
+﻿namespace AdventOfCode.Solutions.Tools
 {
     internal class Input
     {

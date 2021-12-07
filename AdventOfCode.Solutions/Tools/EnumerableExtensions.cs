@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdventOfCode.Solutions.DataStructures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,22 @@ namespace AdventOfCode.Solutions.Tools
                 yield return source.Take(chunksize);
                 source = source.Skip(chunksize);
             }
+        }
+
+        public static IDictionary<TKey, TValue> ToDefaultDictionary<T, TKey, TValue>(
+            this IEnumerable<T> source, 
+            Func<T, TKey> keySelector, 
+            Func<T, TValue> valueSelector) 
+            where TKey : struct 
+            where TValue : struct
+        {
+            var dict = new DefaultDictionary<TKey, TValue>();
+            foreach(var element in source)
+            {
+                dict.Add(keySelector(element), valueSelector(element));
+            }
+
+            return dict;
         }
     }
 }

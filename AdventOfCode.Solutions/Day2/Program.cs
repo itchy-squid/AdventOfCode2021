@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Solutions.Services;
+﻿using AdventOfCode.Solutions.Tools;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Solutions.Day2
