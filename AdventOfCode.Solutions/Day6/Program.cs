@@ -22,11 +22,10 @@ namespace AdventOfCode.Solutions.Day6
 
         public static long Solve(IEnumerable<int> fish, int nDays)
         {
-            var fishCountsByAge = new DefaultDictionary<int, long>();
-
-            fish.GroupBy(n => n)
+            var fishCountsByAge = fish
+                .GroupBy(n => n)
                 .OrderByDescending(g => g.Key)
-                .ForEach(g => fishCountsByAge[g.Key] = g.Count());
+                .ToDefaultDictionary(g => g.Key, g => (long) g.Count());
 
             for (int i = 0; i < nDays; i++)
             {

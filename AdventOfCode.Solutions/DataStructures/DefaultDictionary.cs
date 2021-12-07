@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,22 +7,54 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode.Solutions.DataStructures
 {
-    public class DefaultDictionary<TKey, TValue> : Dictionary<TKey, TValue> 
+    public interface IDefaultDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
         where TKey : struct
         where TValue : struct
     {
-        public new TValue this[TKey key]
+        TValue this[TKey key] {get; set;}
+
+        IEnumerable<TValue> Values {get; }
+    }
+
+    public class DefaultDictionary<TKey, TValue> : IDefaultDictionary<TKey, TValue>
+        where TKey : struct
+        where TValue : struct
+    {
+        private Dictionary<TKey, TValue> _dictionary;
+
+        public DefaultDictionary()
+        {
+            _dictionary = new Dictionary<TKey, TValue>();
+        }
+
+        TValue IDefaultDictionary<TKey,TValue>.this[TKey key]
         {
             get
             {
-                if (!TryGetValue(key, out TValue val))
+                if (!_dictionary.TryGetValue(key, out TValue val))
                 {
                     val = default;
-                    Add(key, val);
+                    _dictionary.Add(key, val);
                 }
                 return val;
             }
-            set { base[key] = value; }
+            set
+            {
+                if (!_dictionary.ContainsKey(key))
+                {
+                    _dictionary.Add(key, default);
+                }
+                _dictionary[key] = value; 
+            }
         }
+
+        IEnumerable<TValue> IDefaultDictionary<TKey, TValue>.Values 
+        { 
+            get => _dictionary.Values; 
+        }
+
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => _dictionary.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => _dictionary.GetEnumerator();
     }
 }

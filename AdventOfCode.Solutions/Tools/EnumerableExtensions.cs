@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Solutions.DataStructures;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,17 +27,17 @@ namespace AdventOfCode.Solutions.Tools
             }
         }
 
-        public static IDictionary<TKey, TValue> ToDefaultDictionary<T, TKey, TValue>(
+        public static IDefaultDictionary<TKey, TValue> ToDefaultDictionary<T, TKey, TValue>(
             this IEnumerable<T> source, 
             Func<T, TKey> keySelector, 
             Func<T, TValue> valueSelector) 
             where TKey : struct 
             where TValue : struct
         {
-            var dict = new DefaultDictionary<TKey, TValue>();
+            IDefaultDictionary<TKey, TValue> dict = new DefaultDictionary<TKey, TValue>();
             foreach(var element in source)
             {
-                dict.Add(keySelector(element), valueSelector(element));
+                dict[keySelector(element)] = valueSelector(element);
             }
 
             return dict;
