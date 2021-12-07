@@ -1,4 +1,5 @@
-﻿using AdventOfCode.Solutions.Tools;
+﻿using AdventOfCode.Solutions.DataStructures;
+using AdventOfCode.Solutions.Tools;
 
 namespace AdventOfCode.Solutions.Day6
 {
@@ -21,15 +22,11 @@ namespace AdventOfCode.Solutions.Day6
 
         public static long Solve(IEnumerable<int> fish, int nDays)
         {
-            var fishCountsByAge = fish.GroupBy(n => n).OrderByDescending(n => n.Key).ToDictionary(n => n.Key, n => (long)n.Count());
+            var fishCountsByAge = new DefaultDictionary<int, long>();
 
-            for (int j = 0; j <= MaxGestationPeriod; j++)
-            {
-                if (!fishCountsByAge.TryGetValue(j, out var _))
-                {
-                    fishCountsByAge.Add(j, 0);
-                }
-            }
+            fish.GroupBy(n => n)
+                .OrderByDescending(g => g.Key)
+                .ForEach(g => fishCountsByAge[g.Key] = g.Count());
 
             for (int i = 0; i < nDays; i++)
             {
