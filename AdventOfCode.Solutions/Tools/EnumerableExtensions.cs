@@ -22,6 +22,7 @@ namespace AdventOfCode.Solutions.Tools
         {
             while (source.Any())
             {
+
                 yield return source.Take(chunksize);
                 source = source.Skip(chunksize);
             }
