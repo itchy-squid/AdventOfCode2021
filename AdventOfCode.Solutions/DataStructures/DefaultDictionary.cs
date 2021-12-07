@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 
 namespace AdventOfCode.Solutions.DataStructures
 {
@@ -20,7 +15,7 @@ namespace AdventOfCode.Solutions.DataStructures
         where TKey : struct
         where TValue : struct
     {
-        private Dictionary<TKey, TValue> _dictionary;
+        private readonly Dictionary<TKey, TValue> _dictionary;
 
         public DefaultDictionary()
         {
