@@ -26,12 +26,7 @@ namespace AdventOfCode.Solutions.DataStructures
         {
             get
             {
-                if (!_dictionary.TryGetValue(key, out TValue val))
-                {
-                    val = default;
-                    _dictionary.Add(key, val);
-                }
-                return val;
+                return _dictionary.TryGetValue(key, out TValue val) ? val : default;
             }
             set
             {
