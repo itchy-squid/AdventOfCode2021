@@ -36,10 +36,10 @@ namespace AdventOfCode.Solutions.Day6
                 long lastValue = 0;
                 for(int j = MaxGestationPeriod; j>= 0; j--)
                 {
-                    //(fishCountsByAge[j], lastValue) = (lastValue, fishCountsByAge[j]);
-                    var temp = fishCountsByAge[j];
-                    fishCountsByAge[j] = lastValue;
-                    lastValue = temp;
+                    (fishCountsByAge[j], lastValue) = (lastValue, fishCountsByAge[j]);
+                    //var temp = fishCountsByAge[j];
+                    //fishCountsByAge[j] = lastValue;
+                    //lastValue = temp;
                 }
                 fishCountsByAge[MaxGestationPeriod] = lastValue;
                 fishCountsByAge[6] += lastValue;
