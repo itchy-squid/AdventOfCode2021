@@ -38,7 +38,7 @@ namespace AdventOfCode.Solutions.Day6
                 fishCountsByAge[6] += lastValue;
             }
 
-            return fishCountsByAge.Values.Aggregate((a, b) => a + b);
+            return fishCountsByAge.Values.Sum();
         }
 
         public static void Dump(int nDays, long result)
