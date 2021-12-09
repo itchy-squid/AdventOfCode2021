@@ -34,7 +34,7 @@ namespace AdventOfCode.Solutions.Day8
 
         public static IEnumerable<Panel> AsEnumerable(this Panel digit)
         {
-            return Enum.GetValues<Panel>().Where(p => p != Panel.UnsetValue && digit.HasFlag(p));
+            return Panels.AsEnumerable().Where(p => digit.HasFlag(p));
         }
 
         public static IEnumerable<Panel> AsEnumerable()
@@ -55,11 +55,6 @@ namespace AdventOfCode.Solutions.Day8
         public static readonly ImmutableList<Digit> All = Panels.ByValue
             .Select((d, idx) => new Digit() { Value = idx, Display = d, Length = d.AsEnumerable().Count() })
             .ToImmutableList();
-
-        public static IEnumerable<Digit> FilterByLength(this IEnumerable<Digit> digits, int length)
-        {
-            return digits.Where(d => d.Length == length);
-        }
     }
 
     public class Model
@@ -68,26 +63,29 @@ namespace AdventOfCode.Solutions.Day8
         
         public bool TryLearn(string token)
         {
+            var filters = new[]
+            {
+                FilterByLength,
+                FilterByPigeonHole
+            };
+
             IEnumerable<Digit> possibilities = Digits.All;
-
-            possibilities = possibilities
-                .FilterByLength(token.Length)
-                .ToList();
-
-            if (possibilities.Count() == 1) 
+            foreach(var filter in filters)
             {
-                Learn(possibilities.First().Value, token);
-                return true;
-            }
-
-            possibilities = FilterByPigeonHole(possibilities, token).ToList();
-            if (possibilities.Count() == 1)
-            {
-                Learn(possibilities.First().Value, token);
-                return true;
+                possibilities = filter(possibilities, token).ToList();
+                if(possibilities.Count() == 1)
+                {
+                    Learn(possibilities.Single().Value, token);
+                    return true;
+                }
             }
 
             return false;
+        }
+
+        private IEnumerable<Digit> FilterByLength(IEnumerable<Digit> digits, string token)
+        {
+            return digits.Where(d => d.Length == token.Length);
         }
 
         private IEnumerable<Digit> FilterByPigeonHole(IEnumerable<Digit> possibilities, string token)
