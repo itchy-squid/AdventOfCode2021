@@ -20,14 +20,14 @@ namespace AdventOfCode.Solutions.Day8
 
         public static int Solve(string input)
         {
-            return input.SplitAndClean('\n').Select(line => SolveLine(line)).Sum();
+            return input.SplitLines().Select(line => SolveLine(line)).Sum();
         }
 
         public static int SolveLine(string line)
         {
             var model = new Model();
             var tokens = line
-                .SplitAndClean()
+                .Tokenize()
                 .Where(s => !string.Equals(s, "|"))
                 .Select(s => new string(s.ToCharArray().OrderBy(c => c).ToArray()))
                 .ToList();

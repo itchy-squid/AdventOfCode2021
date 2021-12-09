@@ -97,18 +97,12 @@ namespace AdventOfCode.Solutions.Day8
                 .Select(g => new { Substring = g.Key.ToCharArray(), Panels = g.Select(kvp => kvp.Key).Aggregate((a, b) => a | b) })
                 .ToList();
 
-            var knownPanelsList = pigeonsInHoles
+            var knownPanels = pigeonsInHoles
                 .Where(p => p.Substring.All(c => tokenCharacters.Contains(c)))
                 .Select(p => p.Panels)
-                .ToList();
+                .Aggregate(Panels.None, (a, b) => a | b);
 
-            if (knownPanelsList.Any())
-            {
-                var knownPanels = knownPanelsList.Aggregate((a, b) => a | b);
-                possibilities = possibilities.Where(p => (p.Display & knownPanels) == knownPanels);
-            }
-
-            return possibilities;
+            return possibilities.Where(p => knownPanels != Panels.None && (p.Display & knownPanels) == knownPanels);
         }
 
         private void Learn(int value, string token)

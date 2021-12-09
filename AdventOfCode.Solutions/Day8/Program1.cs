@@ -23,11 +23,11 @@ namespace AdventOfCode.Solutions.Day8
             var select = (string s) =>
             {
                 var len = s.Length;
-                return len == 2 || len == 4 || len == 3 || len == 7;
+                return new[] { 2, 4, 3, 7 }.Contains(len);
             };
 
             return input
-                .SplitAndClean()
+                .Tokenize()
                 .Where(token => !string.Equals(token, "|"))
                 .Chunk(14)
                 .SelectMany(line => line.Skip(10))
