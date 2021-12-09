@@ -6,21 +6,24 @@ namespace AdventOfCode.Solutions.Day8
     {
         public static void Main()
         {
-            var input = Input.ReadAllLines("Day8");
+            MainAsync().GetAwaiter().GetResult();
+        }
+
+        public static async Task MainAsync()
+        {
+            var input = await Input.ReadAllTextAsync("Day8");
 
             var count = Solve(input);
             Console.WriteLine($"Count: {count}");
             Console.WriteLine();
         }
 
-        public static int Solve(IEnumerable<string> input)
+        public static int Solve(string input)
         {
-            return input
-                .Select(line => Solve(line))
-                .Sum();
+            return input.SplitAndClean('\n').Select(line => SolveLine(line)).Sum();
         }
 
-        public static int Solve(string line)
+        public static int SolveLine(string line)
         {
             var model = new Model();
             var tokens = line
@@ -30,7 +33,6 @@ namespace AdventOfCode.Solutions.Day8
                 .ToList();
 
             var uniqueTokens = tokens.Distinct().ToList();
-
             while (uniqueTokens.Any())
             {
                 var tokenToLearn = uniqueTokens.First();

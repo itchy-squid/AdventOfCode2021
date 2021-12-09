@@ -1,5 +1,4 @@
 ﻿using AdventOfCode.Solutions.Day8;
-using System.Collections.Generic;
 using Xunit;
 
 namespace AdventOfCode.Tests
@@ -28,7 +27,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         [Fact]
         public void Program2Solve()
         {
-            var sum = Program2.Solve(_input.Split('\n', System.StringSplitOptions.RemoveEmptyEntries | System.StringSplitOptions.TrimEntries));
+            var sum = Program2.Solve(_input);
             Assert.Equal(61229, sum);
         }
 
@@ -38,12 +37,12 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         [InlineData("fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg", 1197)]
         public void Program2Solve_SingleLine(string line, int expected)
         {
-            var sum = Program2.Solve(line);
+            var sum = Program2.SolveLine(line);
             Assert.Equal(expected, sum);
         }
 
         [Fact]
-        public void Model_IdentifiesTopPanelAfterLearning2And7()
+        public void Model_LearnsTopPanelAfterSeeing2And7()
         {
             var model = new Model();
             
@@ -65,7 +64,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         }
 
         [Fact]
-        public void Model_LernsAllPanels()
+        public void Model_LearnsAllPanels()
         {
             var model = new Model();
 

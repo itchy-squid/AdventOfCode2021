@@ -131,9 +131,14 @@ namespace AdventOfCode.Solutions.Day8
 
         private void Blacklist(Panel panel, string token)
         {
+            UpdatePossibilities(panel, token, (tokenCharacters, c) => !tokenCharacters.Contains(c));
+        }
+
+        private void UpdatePossibilities(Panel panel, string token, Func<char[], char, bool> selector)
+        {
             var possibilities = _possibilitiesByPanel[panel];
             var filter = token.ToCharArray();
-            possibilities = new(possibilities.ToCharArray().Where(c => !filter.Contains(c)).ToArray());
+            possibilities = new(possibilities.ToCharArray().Where(c => selector(filter, c)).ToArray());
             _possibilitiesByPanel[panel] = possibilities;
 
             if (string.IsNullOrEmpty(possibilities)) throw new InvalidOperationException();
