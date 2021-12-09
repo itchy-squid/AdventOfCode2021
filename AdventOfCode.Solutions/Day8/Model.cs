@@ -123,7 +123,7 @@ namespace AdventOfCode.Solutions.Day8
         {
             var possibilities = _possibilitiesByPanel[panel];
             var filter = token.ToCharArray();
-            possibilities = new(possibilities.ToCharArray().Intersect(filter).ToArray());
+            possibilities = new(possibilities.ToCharArray().Where(c => filter.Contains(c)).ToArray());
             _possibilitiesByPanel[panel] = possibilities;
 
             if (string.IsNullOrEmpty(possibilities)) throw new InvalidOperationException();
