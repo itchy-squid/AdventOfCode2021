@@ -30,7 +30,7 @@ namespace AdventOfCode.Solutions.Day8
         public static readonly Panel Eight = Zero | Panel.Middle;
         public static readonly Panel Nine = Five | Panel.TopRight;
 
-        public static readonly ImmutableArray<Panel> Range = new[] { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine }.ToImmutableArray();
+        public static readonly ImmutableArray<Panel> ByValue = new[] { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine }.ToImmutableArray();
 
         public static IEnumerable<Panel> AsEnumerable(this Panel digit)
         {
@@ -52,7 +52,7 @@ namespace AdventOfCode.Solutions.Day8
 
     public static class Digits
     {
-        public static readonly ImmutableList<Digit> All = Panels.Range
+        public static readonly ImmutableList<Digit> All = Panels.ByValue
             .Select((d, idx) => new Digit() { Value = idx, Display = d, Length = d.AsEnumerable().Count() })
             .ToImmutableList();
 
@@ -115,7 +115,7 @@ namespace AdventOfCode.Solutions.Day8
 
         private void Learn(int value, string token)
         {
-            var digitLearned = Panels.Range[value];
+            var digitLearned = Panels.ByValue[value];
 
             Panels.AsEnumerable().Where(p => digitLearned.HasFlag(p)).ForEach(p => Whitelist(p, token));
             Panels.AsEnumerable().Where(p => !digitLearned.HasFlag(p)).ForEach(p => Blacklist(p, token));
@@ -149,7 +149,7 @@ namespace AdventOfCode.Solutions.Day8
         public int Lookup(string token)
         {
             var panels = token.ToCharArray().Select(Panel).Aggregate((a, b) => a | b);
-            var match = Panels.Range
+            var match = Panels.ByValue
                 .Select((d, idx) => new { Digit = d, Value = idx })
                 .Where(tuple => tuple.Digit == panels)
                 .Single();
