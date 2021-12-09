@@ -34,7 +34,12 @@ namespace AdventOfCode.Solutions.Day8
 
         public static IEnumerable<Panel> AsEnumerable(this Panel digit)
         {
-            return Enum.GetValues<Panel>().Where(p => digit.HasFlag(p));
+            return Enum.GetValues<Panel>().Where(p => p != Panel.UnsetValue && digit.HasFlag(p));
+        }
+
+        public static IEnumerable<Panel> AsEnumerable()
+        {
+            return Enum.GetValues<Panel>().Where(p => p != Panel.UnsetValue);
         }
     }
 
@@ -57,14 +62,7 @@ namespace AdventOfCode.Solutions.Day8
         }
     }
 
-    public interface IModel
-    {
-        bool TryLearn(string token);
-        int Lookup(string token);
-        string GetPossibilities(Panel panel);
-    }
-
-    public class Model : IModel
+    public class Model
     {
         Dictionary<Panel, string> _possibilitiesByPanel = Enum.GetValues<Panel>().ToDictionary(p => p, p => "abcdefg");
         
@@ -101,13 +99,14 @@ namespace AdventOfCode.Solutions.Day8
                 .Select(g => new { Substring = g.Key.ToCharArray(), Panels = g.Select(kvp => kvp.Key).Aggregate((a, b) => a | b) })
                 .ToList();
 
-            if (pigeonsInHoles.Any())
-            {
-                var knownPanels = pigeonsInHoles
-                    .Where(p => p.Substring.All(c => tokenCharacters.Contains(c)))
-                    .Select(p => (Panel?)p.Panels)
-                    .Aggregate((a, b) => a | b);
+            var knownPanelsList = pigeonsInHoles
+                .Where(p => p.Substring.All(c => tokenCharacters.Contains(c)))
+                .Select(p => p.Panels)
+                .ToList();
 
+            if (knownPanelsList.Any())
+            {
+                var knownPanels = knownPanelsList.Aggregate((a, b) => a | b);
                 possibilities = possibilities.Where(p => (p.Display & knownPanels) == knownPanels);
             }
 
@@ -118,22 +117,28 @@ namespace AdventOfCode.Solutions.Day8
         {
             var digitLearned = Panels.Range[value];
 
-            Enum.GetValues<Panel>().Where(p => digitLearned.HasFlag(p)).ForEach(p => Whitelist(p, token));
-            Enum.GetValues<Panel>().Where(p => !digitLearned.HasFlag(p)).ForEach(p => Blacklist(p, token));
+            Panels.AsEnumerable().Where(p => digitLearned.HasFlag(p)).ForEach(p => Whitelist(p, token));
+            Panels.AsEnumerable().Where(p => !digitLearned.HasFlag(p)).ForEach(p => Blacklist(p, token));
         }
 
         private void Whitelist(Panel panel, string token)
         {
-            var possibilities = _possibilitiesByPanel[panel].ToCharArray();
+            var possibilities = _possibilitiesByPanel[panel];
             var filter = token.ToCharArray();
-            _possibilitiesByPanel[panel] = new(possibilities.Intersect(filter).ToArray());
+            possibilities = new(possibilities.ToCharArray().Intersect(filter).ToArray());
+            _possibilitiesByPanel[panel] = possibilities;
+
+            if (string.IsNullOrEmpty(possibilities)) throw new InvalidOperationException();
         }
 
         private void Blacklist(Panel panel, string token)
         {
-            var possibilities = _possibilitiesByPanel[panel].ToCharArray();
+            var possibilities = _possibilitiesByPanel[panel];
             var filter = token.ToCharArray();
-            _possibilitiesByPanel[panel] = new(possibilities.Where(c => !filter.Contains(c)).ToArray());
+            possibilities = new(possibilities.ToCharArray().Where(c => !filter.Contains(c)).ToArray());
+            _possibilitiesByPanel[panel] = possibilities;
+
+            if (string.IsNullOrEmpty(possibilities)) throw new InvalidOperationException();
         }
 
         public string GetPossibilities(Panel panel)
