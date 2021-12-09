@@ -36,13 +36,13 @@ namespace AdventOfCode.Solutions.Day8
                 var tokenToLearn = uniqueTokens.First();
                 uniqueTokens.RemoveAt(0);
 
-                if(!model.TryLearn(tokenToLearn))
+                if (!model.TryLearn(tokenToLearn))
                 {
                     uniqueTokens.Add(tokenToLearn);
                 }
             }
 
-            return tokens.Skip(10).Select((s, i) => (int) Math.Pow(10, 3 - i) * model.Lookup(s)).Sum();
+            return tokens.Skip(10).Select((s, i) => (int)Math.Pow(10, 3 - i) * model.Lookup(s)).Sum();
         }
     }
 }

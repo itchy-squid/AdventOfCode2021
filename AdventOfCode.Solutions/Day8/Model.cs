@@ -6,6 +6,7 @@ namespace AdventOfCode.Solutions.Day8
     [Flags]
     public enum Panel
     {
+        UnsetValue = 0,
         Top = 1,
         Middle = 2,
         Bottom = 4,
@@ -15,8 +16,9 @@ namespace AdventOfCode.Solutions.Day8
         BottomRight = 64
     }
 
-    public static class Digits
+    public static class Panels
     {
+        public static readonly Panel None = Panel.UnsetValue;
         public static readonly Panel Zero = Panel.Top | Panel.TopLeft | Panel.TopRight | Panel.BottomLeft | Panel.BottomRight | Panel.Bottom;
         public static readonly Panel One = Panel.TopRight | Panel.BottomRight;
         public static readonly Panel Two = Panel.Top | Panel.TopRight | Panel.Middle | Panel.BottomLeft | Panel.Bottom;
@@ -28,11 +30,30 @@ namespace AdventOfCode.Solutions.Day8
         public static readonly Panel Eight = Zero | Panel.Middle;
         public static readonly Panel Nine = Five | Panel.TopRight;
 
-        public static readonly Panel[] All = new[] { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine };
+        public static readonly ImmutableArray<Panel> Range = new[] { Zero, One, Two, Three, Four, Five, Six, Seven, Eight, Nine }.ToImmutableArray();
 
         public static IEnumerable<Panel> AsEnumerable(this Panel digit)
         {
             return Enum.GetValues<Panel>().Where(p => digit.HasFlag(p));
+        }
+    }
+
+    public class Digit
+    {
+        public int Value { get; init; }
+        public Panel Display { get; init; }
+        public int Length { get; init; }
+    }
+
+    public static class Digits
+    {
+        public static readonly ImmutableList<Digit> All = Panels.Range
+            .Select((d, idx) => new Digit() { Value = idx, Display = d, Length = d.AsEnumerable().Count() })
+            .ToImmutableList();
+
+        public static IEnumerable<Digit> FilterByLength(this IEnumerable<Digit> digits, int length)
+        {
+            return digits.Where(d => d.Length == length);
         }
     }
 
@@ -47,32 +68,55 @@ namespace AdventOfCode.Solutions.Day8
     {
         Dictionary<Panel, string> _possibilitiesByPanel = Enum.GetValues<Panel>().ToDictionary(p => p, p => "abcdefg");
         
-        static readonly ImmutableDictionary<int, int> _valuesByUniqueLength = Digits.All
-            .Select((d, idx) => new { Idx = idx, Digit = d, NPanels = d.AsEnumerable().Count() })
-            .GroupBy(tuple => tuple.NPanels)
-            .Where(g => g.Count() == 1)
-            .Select(g => g.First())
-            .ToImmutableDictionary(tuple => tuple.NPanels, tuple => tuple.Idx);
-
         public bool TryLearn(string token)
         {
-            if (IdentifyValueByLength(token, out var value)) 
+            IEnumerable<Digit> possibilities = Digits.All;
+
+            possibilities = possibilities
+                .FilterByLength(token.Length)
+                .ToList();
+
+            if (possibilities.Count() == 1) 
             {
-                Learn(value, token);
+                Learn(possibilities.First().Value, token);
                 return true;
             }
 
-            throw new NotImplementedException();
+            possibilities = FilterByPigeonHole(possibilities, token).ToList();
+            if (possibilities.Count() == 1)
+            {
+                Learn(possibilities.First().Value, token);
+                return true;
+            }
+
+            return false;
         }
 
-        private static bool IdentifyValueByLength(string token, out int value)
+        private IEnumerable<Digit> FilterByPigeonHole(IEnumerable<Digit> possibilities, string token)
         {
-            return _valuesByUniqueLength.TryGetValue(token.Length, out value);
+            var tokenCharacters = token.ToCharArray();
+
+            var pigeonsInHoles = _possibilitiesByPanel.GroupBy(kvp => kvp.Value)
+                .Where(g => g.Count() == g.Key.Length)
+                .Select(g => new { Substring = g.Key.ToCharArray(), Panels = g.Select(kvp => kvp.Key).Aggregate((a, b) => a | b) })
+                .ToList();
+
+            if (pigeonsInHoles.Any())
+            {
+                var knownPanels = pigeonsInHoles
+                    .Where(p => p.Substring.All(c => tokenCharacters.Contains(c)))
+                    .Select(p => (Panel?)p.Panels)
+                    .Aggregate((a, b) => a | b);
+
+                possibilities = possibilities.Where(p => (p.Display & knownPanels) == knownPanels);
+            }
+
+            return possibilities;
         }
 
         private void Learn(int value, string token)
         {
-            var digitLearned = Digits.All[value];
+            var digitLearned = Panels.Range[value];
 
             Enum.GetValues<Panel>().Where(p => digitLearned.HasFlag(p)).ForEach(p => Whitelist(p, token));
             Enum.GetValues<Panel>().Where(p => !digitLearned.HasFlag(p)).ForEach(p => Blacklist(p, token));
@@ -100,7 +144,7 @@ namespace AdventOfCode.Solutions.Day8
         public int Lookup(string token)
         {
             var panels = token.ToCharArray().Select(Panel).Aggregate((a, b) => a | b);
-            var match = Digits.All
+            var match = Panels.Range
                 .Select((d, idx) => new { Digit = d, Value = idx })
                 .Where(tuple => tuple.Digit == panels)
                 .Single();

@@ -28,8 +28,18 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         [Fact]
         public void Program2Solve()
         {
-            var sum = Program2.Solve(_input);
+            var sum = Program2.Solve(_input.Split('\n', System.StringSplitOptions.RemoveEmptyEntries | System.StringSplitOptions.TrimEntries));
             Assert.Equal(61229, sum);
+        }
+
+        [Theory]
+        [InlineData("be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe", 8394)]
+        [InlineData("edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc", 9781)]
+        [InlineData("fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg", 1197)]
+        public void Program2Solve_SingleLine(string line, int expected)
+        {
+            var sum = Program2.Solve(line);
+            Assert.Equal(expected, sum);
         }
 
         [Fact]
@@ -52,6 +62,46 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 
             model.TryLearn("cf");
             Assert.Equal(remainingOptions, model.GetPossibilities(panel));
+        }
+
+        [Fact]
+        public void Model_LernsAllPanels()
+        {
+            var model = new Model();
+
+            model.TryLearn("be");
+            model.TryLearn("cfbegad");
+            model.TryLearn("cbdgef");
+            model.TryLearn("fgaecd");
+            model.TryLearn("cgeb");
+            model.TryLearn("fdcge");
+            model.TryLearn("agebfd");
+            model.TryLearn("fecdb");
+            model.TryLearn("fabcd");
+            model.TryLearn("edb");
+
+            model.TryLearn("be");
+            model.TryLearn("cfbegad");
+            model.TryLearn("cbdgef");
+            model.TryLearn("fgaecd");
+            model.TryLearn("cgeb");
+            model.TryLearn("fdcge");
+            model.TryLearn("agebfd");
+            model.TryLearn("fecdb");
+            model.TryLearn("fabcd");
+            model.TryLearn("edb");
+
+            var results = new[] {
+                model.GetPossibilities(Panel.Top),
+                model.GetPossibilities(Panel.TopLeft),
+                model.GetPossibilities(Panel.TopRight),
+                model.GetPossibilities(Panel.Middle),
+                model.GetPossibilities(Panel.BottomLeft),
+                model.GetPossibilities(Panel.BottomRight),
+                model.GetPossibilities(Panel.Bottom)
+            };
+
+            Assert.All(results, r => Assert.Equal(1, r.Length));
         }
     }
 }
