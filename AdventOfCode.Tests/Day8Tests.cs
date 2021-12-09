@@ -26,10 +26,32 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         }
 
         [Fact]
-        public void ProgramSolve_Problem2()
+        public void Program2Solve()
         {
             var sum = Program2.Solve(_input);
             Assert.Equal(61229, sum);
+        }
+
+        [Fact]
+        public void Model_IdentifiesTopPanelAfterLearning2And7()
+        {
+            var model = new Model();
+            
+            model.TryLearn("cf");
+            model.TryLearn("acf");
+
+            Assert.Equal("a", model.GetPossibilities(Panel.Top));
+        }
+
+        [Theory]
+        [InlineData(Panel.TopRight, "cf")]
+        [InlineData(Panel.TopLeft, "abdeg")]
+        public void Model_FiltersPossibilities(Panel panel, string remainingOptions)
+        {
+            var model = new Model();
+
+            model.TryLearn("cf");
+            Assert.Equal(remainingOptions, model.GetPossibilities(panel));
         }
     }
 }

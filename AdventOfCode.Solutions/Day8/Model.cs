@@ -40,9 +40,10 @@ namespace AdventOfCode.Solutions.Day8
     {
         bool TryLearn(string token);
         int Lookup(string token);
+        string GetPossibilities(Panel panel);
     }
 
-    internal class Model
+    public class Model : IModel
     {
         Dictionary<Panel, string> _possibilitiesByPanel = Enum.GetValues<Panel>().ToDictionary(p => p, p => "abcdefg");
         
@@ -55,7 +56,7 @@ namespace AdventOfCode.Solutions.Day8
 
         public bool TryLearn(string token)
         {
-            if ( _valuesByUniqueLength.TryGetValue(token.Length, out var value)) 
+            if (IdentifyValueByLength(token, out var value)) 
             {
                 Learn(value, token);
                 return true;
@@ -64,22 +65,36 @@ namespace AdventOfCode.Solutions.Day8
             throw new NotImplementedException();
         }
 
+        private static bool IdentifyValueByLength(string token, out int value)
+        {
+            return _valuesByUniqueLength.TryGetValue(token.Length, out value);
+        }
+
         private void Learn(int value, string token)
         {
             var digitLearned = Digits.All[value];
-            var panelsToUpdate = Enum.GetValues<Panel>().Where(p => digitLearned.HasFlag(p));
 
-            foreach (var panel in panelsToUpdate)
-            {
-                Learn(panel, token);
-            }
+            Enum.GetValues<Panel>().Where(p => digitLearned.HasFlag(p)).ForEach(p => Whitelist(p, token));
+            Enum.GetValues<Panel>().Where(p => !digitLearned.HasFlag(p)).ForEach(p => Blacklist(p, token));
         }
 
-        private void Learn(Panel panel, string token)
+        private void Whitelist(Panel panel, string token)
         {
             var possibilities = _possibilitiesByPanel[panel].ToCharArray();
             var filter = token.ToCharArray();
             _possibilitiesByPanel[panel] = new(possibilities.Intersect(filter).ToArray());
+        }
+
+        private void Blacklist(Panel panel, string token)
+        {
+            var possibilities = _possibilitiesByPanel[panel].ToCharArray();
+            var filter = token.ToCharArray();
+            _possibilitiesByPanel[panel] = new(possibilities.Where(c => !filter.Contains(c)).ToArray());
+        }
+
+        public string GetPossibilities(Panel panel)
+        {
+            return _possibilitiesByPanel[panel];
         }
 
         public int Lookup(string token)
