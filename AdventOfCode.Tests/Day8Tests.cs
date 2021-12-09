@@ -19,17 +19,17 @@ egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce";
 
         [Fact]
-        public void ProgramSolve_Problem1()
+        public void Program1Solve()
         {
-            var count = Program.Solve(_input.Split('\n', System.StringSplitOptions.RemoveEmptyEntries), Program.Problem1);
+            var count = Program1.Solve(_input);
             Assert.Equal(26, count);
         }
 
-        //[Fact]
-        //public void ProgramSolve_Problem2()
-        //{
-        //    var fuel = Program.Solve(_input, Program.Problem2);
-        //    Assert.Equal(168, fuel);
-        //}
+        [Fact]
+        public void ProgramSolve_Problem2()
+        {
+            var sum = Program2.Solve(_input);
+            Assert.Equal(61229, sum);
+        }
     }
 }

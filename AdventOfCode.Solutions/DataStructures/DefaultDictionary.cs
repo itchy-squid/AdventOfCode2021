@@ -22,11 +22,11 @@ namespace AdventOfCode.Solutions.DataStructures
             _dictionary = new Dictionary<TKey, TValue>();
         }
 
-        TValue IDefaultDictionary<TKey,TValue>.this[TKey key]
+        public TValue this[TKey key]
         {
             get
             {
-                return _dictionary.TryGetValue(key, out TValue val) ? val : _defaultSelector();
+                return _dictionary.TryGetValue(key, out TValue? val) ? val : _defaultSelector();
             }
             set
             {
