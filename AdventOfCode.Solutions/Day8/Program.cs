@@ -9,23 +9,29 @@ namespace AdventOfCode.Solutions.Day8
         public static void Main()
         {
             var input = Input.ReadAllLines("Day8");
-            Dump(Solve(input, Problem1));
-        }
 
-        public static int Solve(IEnumerable<string> input, Func<int, bool> select)
-        {
-            var displayStringCountsByDisplayString = input
-                .SelectMany(s => s.SplitAndClean('|').Last().SplitAndClean())
-                .Select(s => new string(s.ToCharArray().OrderBy(s => s).ToArray()))
-                .GroupBy(s => s)
-                .ToDictionary(s => s.Key, s => s.Count());
-
-            return displayStringCountsByDisplayString.Where(s => select(s.Key.Length)).Select(s => s.Value).Sum();
-        }
-
-        private static void Dump(int count)
-        {
+            var count = Solve(input, Problem1);
             Console.WriteLine($"Count: {count}");
+            Console.WriteLine();
+        }
+
+        public static int Solve(IEnumerable<string> input, Func<IEnumerable<string>, int> calc)
+        {
+            var tokens = input
+                .SelectMany(s => s.SplitAndClean().Where(token => !string.Equals(token, "|")));
+
+            return calc(tokens);
+        }
+
+        public static int Problem1(IEnumerable<string> displayStrings)
+        {
+            var select = (string s) =>
+            {
+                var len = s.Length;
+                return len == 2 || len == 4 || len == 3 || len == 7;
+            };
+
+            return displayStrings.Chunk(14).SelectMany(line => line.Skip(10)).Where(select).Count();
         }
     }
 }

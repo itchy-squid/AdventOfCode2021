@@ -18,14 +18,14 @@ namespace AdventOfCode.Solutions.Tools
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunksize)
-        {
-            while (source.Any())
-            {
-                yield return source.Take(chunksize);
-                source = source.Skip(chunksize);
-            }
-        }
+        //public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> source, int chunksize)
+        //{
+        //    while (source.Any())
+        //    {
+        //        yield return source.Take(chunksize);
+        //        source = source.Skip(chunksize);
+        //    }
+        //}
 
         public static IDefaultDictionary<TKey, TValue> ToDefaultDictionary<T, TKey, TValue>(
             this IEnumerable<T> source, 
