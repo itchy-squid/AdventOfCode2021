@@ -121,12 +121,7 @@ namespace AdventOfCode.Solutions.Day8
 
         private void Whitelist(Panel panel, string token)
         {
-            var possibilities = _possibilitiesByPanel[panel];
-            var filter = token.ToCharArray();
-            possibilities = new(possibilities.ToCharArray().Where(c => filter.Contains(c)).ToArray());
-            _possibilitiesByPanel[panel] = possibilities;
-
-            if (string.IsNullOrEmpty(possibilities)) throw new InvalidOperationException();
+            UpdatePossibilities(panel, token, (tokenCharacters, c) => tokenCharacters.Contains(c));
         }
 
         private void Blacklist(Panel panel, string token)
