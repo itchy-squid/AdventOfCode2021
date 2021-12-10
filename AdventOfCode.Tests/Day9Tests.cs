@@ -15,10 +15,17 @@ namespace AdventOfCode.Tests
         };
 
         [Fact]
-        public void ProgramSolve_Problem1()
+        public void Program1Solve_Problem1()
         {
-            var result = Program.Solve(_input);
+            var result = Program1.Solve(_input);
             Assert.Equal(15, result);
+        }
+
+        [Fact]
+        public void Program2Solve_Problem2()
+        {
+            var result = Program2.Solve(_input);
+            Assert.Equal(1134, result);
         }
     }
 }

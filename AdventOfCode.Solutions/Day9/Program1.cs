@@ -2,7 +2,7 @@ using AdventOfCode.Solutions.Tools;
 
 namespace AdventOfCode.Solutions.Day9
 {
-    public class Program
+    public class Program1
     {
         public static void Main()
         {
