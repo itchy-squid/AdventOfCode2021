@@ -35,6 +35,8 @@ namespace AdventOfCode.Solutions.Day9
                 DiscoverBasin(pt.x, pt.y, idx, heights, basinMap);
             }
 
+            Dump(heights, basinMap);
+
             var basins = basinMap.SelectMany(row => row)
                 .Where(basinNo => basinNo >= 0)
                 .GroupBy(basinNo => basinNo)
@@ -74,10 +76,37 @@ namespace AdventOfCode.Solutions.Day9
         private static bool IsInBasin(int x, int y, int basin, int[][] heights, int[][] basinMap)
         {
             return heights[y][x] != 9
-                && (x == 0                     || heights[y][x - 1] > heights[y][x] || basinMap[y][x-1] == basin)
-                && (y == 0                     || heights[y - 1][x] > heights[y][x] || basinMap[y-1][x] == basin)
-                && (x == heights[0].Length - 1 || heights[y][x + 1] > heights[y][x] || basinMap[y][x + 1] == basin)
-                && (y == heights.Length - 1    || heights[y + 1][x] > heights[y][x] || basinMap[y+1][x] == basin);
+                && (x == 0                     || heights[y][x - 1] >= heights[y][x] || basinMap[y][x-1] == basin)
+                && (y == 0                     || heights[y - 1][x] >= heights[y][x] || basinMap[y-1][x] == basin)
+                && (x == heights[0].Length - 1 || heights[y][x + 1] >= heights[y][x] || basinMap[y][x + 1] == basin)
+                && (y == heights.Length - 1    || heights[y + 1][x] >= heights[y][x] || basinMap[y+1][x] == basin);
+        }
+
+        private static void Dump(int[][]heights, int[][] basinMap)
+        {
+            ConsoleColor[] colors = new[]
+            {
+                ConsoleColor.DarkBlue,
+                ConsoleColor.DarkCyan,
+                ConsoleColor.DarkGray,
+                ConsoleColor.DarkGreen,
+                ConsoleColor.DarkMagenta,
+                ConsoleColor.DarkRed,
+                ConsoleColor.DarkYellow
+            };
+
+            var chooseColor = (int basin) => basin < 0 ? ConsoleColor.Black : colors[basin % colors.Length];
+
+            for(int y = 0; y < heights.Length; y++)
+            {
+                for(int x = 0; x < heights[0].Length; x++)
+                {
+                    Console.BackgroundColor = chooseColor(basinMap[y][x]);
+                    Console.Write(heights[y][x]);
+                }
+                Console.BackgroundColor = chooseColor(-1);
+                Console.WriteLine();
+            }
         }
     }
 }
