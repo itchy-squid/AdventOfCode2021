@@ -18,7 +18,14 @@ public class Day11Tests
     [Fact]
     public void ProgramSolve_Problem1()
     {
-        var result = Program.Solve(_input.SplitLines(), 100);
+        var result = Program.Solve(_input.SplitLines(), Program.Problem1);
         Assert.Equal(1656, result);
+    }
+
+    [Fact]
+    public void ProgramSolve_Problem2()
+    {
+        var result = Program.Solve(_input.SplitLines(), Program.Problem2);
+        Assert.Equal(195, result);
     }
 }

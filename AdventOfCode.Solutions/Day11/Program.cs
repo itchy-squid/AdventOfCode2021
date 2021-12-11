@@ -8,24 +8,40 @@ namespace AdventOfCode.Solutions.Day11
         {
             var input = Input.ReadAllLines("Day11");
 
-            var result = Solve(input, 100);
+            int result;
+            result = Solve(input, Problem1);
+            Console.WriteLine($"No. of flashes: {result}");
+            Console.WriteLine();
+
+            result = Solve(input, Problem2);
             Console.WriteLine($"No. of flashes: {result}");
             Console.WriteLine();
         }
 
-        public static int Solve(IEnumerable<string> input, int steps)
+        public static int Solve(IEnumerable<string> input, Func<Octopus[][], int> calculator)
         {
             var octopuses = input
-                .Select((row, y) => 
+                .Select((row, y) =>
                     row.Select((octopus, x) => new Octopus(x, y, octopus.ToInt())).ToArray())
                 .ToArray();
 
-            return CountFlashes(octopuses, steps);
+            return calculator(octopuses);
+        }
+        public static int Problem1(Octopus[][] octos)
+        {
+            return Enumerable.Range(0, 100).Select(i => Step(octos)).Sum();
         }
 
-        public static int CountFlashes(Octopus[][] input, int steps)
+        public static int Problem2(Octopus[][] octos)
         {
-            return Enumerable.Range(0, steps).Select(i => Step(input)).Sum();
+            var i = 0;
+            while(!octos.SelectMany(row => row).All(o => o.Lumens == 0))
+            {
+                Step(octos);
+                i++;
+            }
+
+            return i;
         }
 
         public static int Step(Octopus[][] octos)
