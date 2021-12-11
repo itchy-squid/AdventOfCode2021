@@ -5,11 +5,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>AdventOfCode.Solutions.Day9.Program2</StartupObject>
+    <StartupObject>AdventOfCode.Solutions.Day11.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
     <None Update="Day10\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Day11\Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Day2\Input.txt">

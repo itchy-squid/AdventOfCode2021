@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Solutions.Tools
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         public static string[] SplitLines(this string input)
         {
@@ -16,5 +16,10 @@
         {
             return input.Split(character, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         } 
+
+        public static int ToInt(this char c)
+        {
+            return c - '0';
+        }
     }
 }
