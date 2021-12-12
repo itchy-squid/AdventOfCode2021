@@ -50,7 +50,7 @@ start-RW";
         [InlineData(_input3, 226)]
         public void ProgramSolve_Problem1(string input, int expected)
         {
-            var result = Program.Solve(input.SplitLines(), 1);
+            var result = Program.Solve(input.SplitLines(), Program.Problem1Create);
             Assert.Equal(expected, result);
         }
 
@@ -61,7 +61,7 @@ start-RW";
         [InlineData(_input3, 3509)]
         public void ProgramSolve_Problem2(string input, int expected)
         {
-            var result = Program.Solve(input.SplitLines(), 2);
+            var result = Program.Solve(input.SplitLines(), Program.Problem2Create);
             Assert.Equal(expected, result);
         }
     }
