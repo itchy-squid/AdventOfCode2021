@@ -6,7 +6,7 @@ namespace AdventOfCode.Solutions.Day12
     {
         public string Name { get; private init; }
         public Func<ImmutableList<string>, bool> CanVisit { get; private init; }
-        private List<Node> _nodes = new List<Node>();
+        private List<Node> _nodes = new();
 
         public Node(string name, Func<ImmutableList<string>, bool> canVisit)
         {
