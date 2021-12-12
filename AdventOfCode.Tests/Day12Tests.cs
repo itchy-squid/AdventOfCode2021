@@ -48,9 +48,20 @@ start-RW";
         [InlineData(_input1, 10)]
         [InlineData(_input2, 19)]
         [InlineData(_input3, 226)]
-        public void ProgramSolve_Solution1_SmallInput(string input, int expected)
+        public void ProgramSolve_Problem1(string input, int expected)
         {
-            var result = Program.Solve(input.SplitLines());
+            var result = Program.Solve(input.SplitLines(), 1);
+            Assert.Equal(expected, result);
+        }
+
+
+        [Theory]
+        [InlineData(_input1, 36)]
+        [InlineData(_input2, 103)]
+        [InlineData(_input3, 3509)]
+        public void ProgramSolve_Problem2(string input, int expected)
+        {
+            var result = Program.Solve(input.SplitLines(), 2);
             Assert.Equal(expected, result);
         }
     }

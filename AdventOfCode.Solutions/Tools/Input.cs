@@ -9,7 +9,7 @@
             var file = Path.Combine(Directory.GetCurrentDirectory(), directory, InputFilename);
             
             Console.WriteLine($"Reading input from {file}");
-            return File.ReadAllLines(file);
+            return File.ReadAllLines(file).ToList();
         }
 
         public static Task<string> ReadAllTextAsync(string directory)
