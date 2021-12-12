@@ -44,5 +44,18 @@ namespace AdventOfCode.Solutions.Tools
 
             return dict;
         }
+
+        public static TValue FetchOrCreate<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> create)
+            where TKey : notnull
+        {
+            if (dictionary.TryGetValue(key, out var existingRecord))
+            {
+                return existingRecord;
+            }
+
+            var newRecord = create(key);
+            dictionary.Add(key, newRecord);
+            return newRecord;
+        }
     }
 }
