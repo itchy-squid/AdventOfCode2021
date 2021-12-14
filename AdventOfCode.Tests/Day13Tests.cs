@@ -28,13 +28,26 @@ namespace AdventOfCode.Tests
 fold along y=7
 fold along x=5";
 
+        const string _output = @"#####
+#...#
+#...#
+#...#
+#####";
+
         [Theory]
         [InlineData(1, 17)]
         [InlineData(null, 16)]
-        public void ProgramSolve_Problem1(int? steps, int expected)
+        public void ProgramProblem1Solve(int? steps, int expected)
         {
-            var result = Program.Solve(_input.SplitLines(), steps);
+            var result = Program.Problem1Solve(_input.SplitLines(), steps);
             Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void ProgramProblem2Solve()
+        {
+            var result = Program.Problem2Solve(_input.SplitLines());
+            Assert.Equal(_output, result);
         }
     }
 }

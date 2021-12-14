@@ -1,5 +1,6 @@
 ﻿using AdventOfCode.Solutions.Tools;
 using System.Collections.Immutable;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Solutions.Day13
@@ -10,12 +11,16 @@ namespace AdventOfCode.Solutions.Day13
         {
             var input = Input.ReadAllLines("Day13");
 
-            var result = Solve(input, 1);
-            Console.WriteLine(result);
+            var result1 = Problem1Solve(input);
+            Console.WriteLine(result1);
+            Console.WriteLine();
+
+            var result2 = Problem2Solve(input);
+            Console.WriteLine(result2);
             Console.WriteLine();
         }
 
-        public static int Solve(IEnumerable<string> lines, int? steps = null)
+        public static int Problem1Solve(IEnumerable<string> lines, int? steps = 1)
         {
             var reader = lines.GetEnumerator();
 
@@ -23,6 +28,16 @@ namespace AdventOfCode.Solutions.Day13
             var endingModel = ApplyInstructions(reader, startingModel, steps);
 
             return endingModel.Points.Distinct().Count();
+        }
+
+        public static string Problem2Solve(IEnumerable<string> lines)
+        {
+            var reader = lines.GetEnumerator();
+
+            var startingModel = new Paper(GetPoints(reader));
+            var endingModel = ApplyInstructions(reader, startingModel, null);
+
+            return endingModel.ToString();
         }
 
         private static IEnumerable<Point> GetPoints(IEnumerator<string> lineReader)
@@ -83,6 +98,25 @@ namespace AdventOfCode.Solutions.Day13
                 X = pt.X,
                 Y = pt.Y <= y ? pt.Y : y - (pt.Y - y)
             }));
+        }
+
+        public override string ToString()
+        {
+            var minX = Points.Select(pt => pt.X).Min();
+            var maxX = Points.Select(pt => pt.X).Max();
+            var minY = Points.Select(pt => pt.Y).Min();
+            var maxY = Points.Select(pt => pt.Y).Max();
+
+            var builder = new StringBuilder();
+            var pointsByY = Points.GroupBy(pt => pt.Y);
+
+            char[][] dump = Enumerable.Range(minY, maxY - minY + 1)
+                .Select(y => Enumerable.Repeat('.', maxX - minX + 1).ToArray())
+                .ToArray();
+
+            Points.ForEach(pt => dump[pt.Y - minY][pt.X - minX] = '#');
+
+            return dump.Select(line => new String(line)).Aggregate((a, b) => $"{a}{System.Environment.NewLine}{b}");
         }
     }
 }
