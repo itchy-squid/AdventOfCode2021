@@ -4,7 +4,7 @@
     {
         public static string[] SplitLines(this string input)
         {
-            return input.SplitAndClean(new[] { '\n' });
+            return input.Split(new[] { '\n' }, StringSplitOptions.TrimEntries);
         }
 
         public static string[] Tokenize(this string input)
