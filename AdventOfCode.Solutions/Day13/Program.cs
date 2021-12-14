@@ -10,19 +10,19 @@ namespace AdventOfCode.Solutions.Day13
         {
             var input = Input.ReadAllLines("Day13");
 
-            var result = Solve(input);
+            var result = Solve(input, 1);
             Console.WriteLine(result);
             Console.WriteLine();
         }
 
-        public static int Solve(IEnumerable<string> lines)
+        public static int Solve(IEnumerable<string> lines, int? steps = null)
         {
             var reader = lines.GetEnumerator();
 
             var startingModel = new Paper(GetPoints(reader));
-            var endingModel = ApplyInstructions(reader, startingModel, 1);
+            var endingModel = ApplyInstructions(reader, startingModel, steps);
 
-            return endingModel.Points.Count;
+            return endingModel.Points.Distinct().Count();
         }
 
         private static IEnumerable<Point> GetPoints(IEnumerator<string> lineReader)
@@ -38,10 +38,10 @@ namespace AdventOfCode.Solutions.Day13
             }
         }
 
-        private static Paper ApplyInstructions(IEnumerator<string> lineReader, Paper model, int steps)
+        private static Paper ApplyInstructions(IEnumerator<string> lineReader, Paper model, int? steps)
         {
             var regex = new Regex(@"fold along ((?<foldX>x)|y)=(?<position>\d+)");
-            for (int i = 0; i < steps && lineReader.MoveNext(); i++)
+            for (int i = 0; (steps == null || i < steps) && lineReader.MoveNext(); i++)
             {
                 var match = regex.Match(lineReader.Current);
                 var position = int.Parse(match.Groups["position"].Value);
@@ -71,7 +71,7 @@ namespace AdventOfCode.Solutions.Day13
         {
             return new Paper(Points.Select(pt => new Point
             {
-                X = pt.X <= x ? x : x - (pt.X - x),
+                X = pt.X <= x ? pt.X : x - (pt.X - x),
                 Y = pt.Y
             }));
         }
@@ -81,7 +81,7 @@ namespace AdventOfCode.Solutions.Day13
             return new Paper(Points.Select(pt => new Point
             {
                 X = pt.X,
-                Y = pt.Y <= y ? y : y - (pt.Y - y)
+                Y = pt.Y <= y ? pt.Y : y - (pt.Y - y)
             }));
         }
     }
