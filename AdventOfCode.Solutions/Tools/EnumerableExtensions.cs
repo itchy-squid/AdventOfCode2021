@@ -57,5 +57,17 @@ namespace AdventOfCode.Solutions.Tools
             dictionary.Add(key, newRecord);
             return newRecord;
         }
+
+        public static T[][] To2DArray<T>(this IEnumerable<IEnumerable<T>> values)
+        {
+            return values.Select(row => row.ToArray()).ToArray();
+        }
+
+        public static T[][] Init2DArray<T>(int width, int height, T value)
+        {
+            return Enumerable.Range(0, height)
+                .Select(y => Enumerable.Range(0, width).Select(x => value))
+                .To2DArray();
+        }
     }
 }
