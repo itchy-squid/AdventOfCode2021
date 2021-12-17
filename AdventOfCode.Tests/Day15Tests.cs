@@ -23,9 +23,18 @@ namespace AdventOfCode.Tests
         [Theory]
         [InlineData(_input2x2, 7)]
         [InlineData(_input, 40)]
-        public void ProgramSolve_MostCommonMinusLeastCommon(string input, int expected)
+        public void ProgramSolve_Problem1(string input, int expected)
         {
-            var result = Program.Solve(input.SplitLines());
+            var result = Program.Solve(input.SplitLines(), Program.Problem1);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        //[InlineData(_input2x2, 7)]
+        [InlineData(_input, 315)]
+        public void ProgramSolve_Problem2(string input, int expected)
+        {
+            var result = Program.Solve(input.SplitLines(), Program.Problem2);
             Assert.Equal(expected, result);
         }
     }
