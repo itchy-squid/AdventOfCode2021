@@ -54,5 +54,12 @@ namespace AdventOfCode.Solutions.Day16
             var nBits = bits.Count;
             return bits.Select((b, i) => b << (nBits - i - 1)).Aggregate(0, (a, b) => a | b);
         }
+
+        public static long ToLong(this IEnumerable<int> bitStream)
+        {
+            var bits = bitStream.ToList();
+            var nBits = bits.Count;
+            return bits.Select((b, i) => (long)b << (nBits - i - 1)).Aggregate((long)0, (a, b) => a | b);
+        }
     }
 }

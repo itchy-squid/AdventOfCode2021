@@ -12,5 +12,7 @@
         int Version { get; }
 
         IEnumerable<IPacket> Subpackets { get; }
+
+        long Evaluate();
     }
 }

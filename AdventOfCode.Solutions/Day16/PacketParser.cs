@@ -12,13 +12,15 @@ namespace AdventOfCode.Solutions.Day16
         public (IPacket, IEnumerable<int>) ParseNext(int version, int type, IEnumerable<int> content)
         {
             bool continueBit;
+            List<int> valueBits = new List<int>();
             do
             {
                 (continueBit, content) = (content.Take(1).Single() == 1, content.Skip(1));
-                (var chunk, content) = (content.Take(4).ToInt(), content.Skip(4).ToList());
+                (var chunk, content) = (content.Take(4).ToList(), content.Skip(4).ToList());
+                valueBits.AddRange(chunk);
             } while (continueBit);
 
-            return (new Packet(version, Enumerable.Empty<IPacket>()), content);
+            return (new LiteralPacket(version, valueBits.ToLong()), content);
         }
     }
 
@@ -36,7 +38,7 @@ namespace AdventOfCode.Solutions.Day16
             (var subpacketsLength, content)  = (content.Take(15).ToInt(), content.Skip(15));
             (var subpacketsContent, content) = (content.Take(subpacketsLength).ToList(), content.Skip(subpacketsLength).ToList());
 
-            return (new Packet(version, subpacketsContent.ToPacketStream()), content);
+            return (new OperatorPacket(version, type, subpacketsContent.ToPacketStream()), content);
         }
     }
     public class CountOperatorPacketParser : IPacketParser
@@ -60,7 +62,7 @@ namespace AdventOfCode.Solutions.Day16
                 packets.Add(packet);
             }
 
-            return (new Packet(version, packets), content);
+            return (new OperatorPacket(version, type, packets), content);
         }
     }
 }
