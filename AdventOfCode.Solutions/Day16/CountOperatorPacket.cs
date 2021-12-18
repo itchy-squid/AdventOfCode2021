@@ -30,7 +30,9 @@ namespace AdventOfCode.Solutions.Day16
     {
         public int Version { get; }
 
-        public ImmutableList<IPacket> Subpackets { get; init;  }
+        public ImmutableList<IPacket> Subpackets { get;  }
+
+        IEnumerable<IPacket> IPacket.Subpackets => Subpackets;
 
         public CountOperatorPacket(int version, IEnumerable<IPacket> subpackets)
         {

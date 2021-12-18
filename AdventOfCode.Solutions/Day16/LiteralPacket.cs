@@ -9,10 +9,12 @@
 
         public (IPacket, IEnumerable<int>) ParseNext(int version, int type, IEnumerable<int> content)
         {
-            while(content.First() != 0)
+            bool continueBit;
+            do
             {
-                content = content.Skip(5);
-            }
+                (continueBit, content) = (content.Take(1).Single() == 1, content.Skip(1));
+                (var chunk, content) = (content.Take(4).ToInt(), content.Skip(4).ToList());
+            } while (continueBit);
 
             return (new LiteralPacket(version), content);
         }

@@ -22,7 +22,12 @@ namespace AdventOfCode.Solutions.Day16
         public static long Solve(IEnumerable<char> input)
         {
             var packets = input.ToBitStream().ToPacketStream().ToList();
-            return packets.Select(p => p.Version).Sum();
+            return packets.Sum(p => Tally(p));
+        }
+
+        private static int Tally(IPacket packet)
+        {
+            return packet.Version + packet.Subpackets.Sum(p => Tally(p));
         }
     }
 }

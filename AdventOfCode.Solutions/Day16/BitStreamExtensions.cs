@@ -11,25 +11,30 @@ namespace AdventOfCode.Solutions.Day16
                 new LengthOperatorPacketParser()
             }.ToImmutableList();
 
-        public static (IPacket, IEnumerable<int>) ParseNext(this IEnumerable<int> cursor)
+        public static (IPacket?, IEnumerable<int>) ParseNext(this IEnumerable<int> head)
         {
-            (var version, cursor) = (cursor.Take(3).ToInt(), cursor.Skip(3));
-            (var type, cursor) = (cursor.Take(3).ToInt(), cursor.Skip(3));
+            var cursor = head;
+            (var version, cursor) = (cursor.Take(3).ToInt(), cursor.Skip(3).ToList());
+            (var type, cursor) = (cursor.Take(3).ToInt(), cursor.Skip(3).ToList());
 
-            var parser = _packetParsers.First(p => p.IsParser(version, type, cursor));
+            var parser = _packetParsers.FirstOrDefault(p => p.IsParser(version, type, cursor));
+            if (version != 0 && parser != null)
+            {
+                (var packet, cursor) = parser.ParseNext(version, type, cursor);
+                return (packet, cursor);
+            }
 
-            (var packet, cursor) = parser.ParseNext(version, type, cursor);
-            return (packet, cursor);
-
+            return (null, head);
         }
 
         public static IEnumerable<IPacket> ToPacketStream(this IEnumerable<int> bitStream)
         {
-            var head = bitStream;
+            var head = bitStream.Concat(Enumerable.Repeat(0, 32));
             while (head.Any())
             {
                 (var packet, head) = head.ParseNext();
-                yield return packet;
+                if (packet != null) yield return packet;
+                else break;
             }
         }
 

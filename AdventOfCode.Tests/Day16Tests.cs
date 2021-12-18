@@ -22,8 +22,8 @@ namespace AdventOfCode.Tests
 
         [Theory]
         [InlineData("D2FE28", 6)]
-        [InlineData("38006F45291200", 1)]
-        [InlineData("EE00D40C823060", 7)]
+        [InlineData("38006F45291200", 9)]
+        [InlineData("EE00D40C823060", 12)]
         [InlineData("8A004A801A8002F478", 16)]
         [InlineData("620080001611562C8802118E34", 12)]
         [InlineData("C0015000016115A2E0802F182340", 23)]
