@@ -25,7 +25,7 @@ namespace AdventOfCode.Solutions.Day15
         {
             var model = Parse(lines.ToImmutableList(), scale);
             var path = Djikstra(model);
-            return path.Last().Item2;
+            return path.Item2;
         }
 
         private static int[,] Parse(IImmutableList<string> lines, int scale)
@@ -57,7 +57,9 @@ namespace AdventOfCode.Solutions.Day15
             {
                 for (var x = 0; x < line.Length; x++)
                 {
-                    result[y + yOffset, x + xOffset] = line[x].ToInt() + bonus;
+                    var costBeforeModulo = line[x].ToInt() + bonus;
+                    var cost = costBeforeModulo % 9 == 0 ? 9 : costBeforeModulo % 9;
+                    result[y + yOffset, x + xOffset] = cost;
                 }
             }
 
@@ -66,10 +68,10 @@ namespace AdventOfCode.Solutions.Day15
 
 
         // Stolen from Wikipedia
-        private static Stack<((int, int), int)> Djikstra(int[,] model)
+        private static (Stack<(int, int)>, int) Djikstra(int[,] model)
         {
-            int height = model.GetLength(1);
-            int width = model.GetLength(0);
+            int height = model.GetLength(0);
+            int width = model.GetLength(1);
 
             HashSet<(int, int)> Q = new HashSet<(int, int)>();
             int[,] distances = new int[height, width];
@@ -109,15 +111,41 @@ namespace AdventOfCode.Solutions.Day15
                 }
             }
 
-            Stack<((int, int), int)> path = new();
+            Stack<(int, int)> path = new();
             (int, int)? u2 = (height - 1, width - 1);
-            while(u2 != null)
+            var cost = distances[u2.Value.Item2, u2.Value.Item1];
+            while (u2 != null)
             {
-                path.Push((u2.Value, distances[u2.Value.Item2, u2.Value.Item1]));
+                path.Push(u2.Value);
                 u2 = prev[u2.Value.Item2, u2.Value.Item1];
             }
 
-            return path;
+            // Dump(model, path);
+            return (path, cost);
+        }
+
+        private static void Dump(int[,] model, Stack<(int, int)> path)
+        {
+            var isBold = false;
+            var pathSet = path.ToHashSet();
+
+            foreach (var y in Enumerable.Range(0, model.GetLength(0)))
+            {
+                foreach(var x in Enumerable.Range(0, model.GetLength(1)))
+                {
+                    if(pathSet.Contains((x, y)) ^ isBold)
+                    {
+                        Console.BackgroundColor = isBold ? ConsoleColor.Black : ConsoleColor.DarkMagenta;
+                        isBold = !isBold;
+                    }
+
+                    Console.Write(String.Format("{0,2}", model[y, x]));
+                }
+
+                isBold = false;
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.WriteLine();
+            }
         }
     }
 }
