@@ -10,10 +10,10 @@ namespace AdventOfCode.Solutions.Day18
         int Magnitude();
 
         bool TryExplode();
-        bool TryExplode(ImmutableStack<SnailfishOperator> parents, int side);
+        bool TryExplode(ImmutableStack<(SnailfishOperator, int)> history);
 
         bool TrySplit();
-        bool TrySplit(ImmutableStack<SnailfishOperator> parents, int side);
+        bool TrySplit(ImmutableStack<(SnailfishOperator, int)> history);
     }
 
     public class SnailfishLiteral : ISnailfishNumber
@@ -42,7 +42,7 @@ namespace AdventOfCode.Solutions.Day18
             return false;
         }
 
-        public bool TryExplode(ImmutableStack<SnailfishOperator> parents, int side)
+        public bool TryExplode(ImmutableStack<(SnailfishOperator, int)> history)
         {
             return false;
         }
@@ -52,7 +52,7 @@ namespace AdventOfCode.Solutions.Day18
             return false;
         }
 
-        public bool TrySplit(ImmutableStack<SnailfishOperator> parents, int side)
+        public bool TrySplit(ImmutableStack<(SnailfishOperator, int)> history)
         {
             if (Value < 10) return false;
 
@@ -63,8 +63,10 @@ namespace AdventOfCode.Solutions.Day18
                 Right = new SnailfishLiteral(Value - leftValue)
             };
 
-            if (side == -1) parents.First().Left = newNode;
-            else if (side == 1) parents.First().Right = newNode;
+            var (parent, side) = history.First();
+
+            if (side == -1) parent.Left = newNode;
+            else if (side == 1) parent.Right = newNode;
             else throw new ApplicationException();
 
             return true;
@@ -86,39 +88,41 @@ namespace AdventOfCode.Solutions.Day18
 
         public bool TryExplode()
         {
-            return TryExplode(ImmutableStack<SnailfishOperator>.Empty, 0);
+            return TryExplode(ImmutableStack<(SnailfishOperator, int)>.Empty);
         }
 
-        public bool TryExplode(ImmutableStack<SnailfishOperator> parents, int side)
+        public bool TryExplode(ImmutableStack<(SnailfishOperator, int)> history)
         {
-            if (parents.Count() >= 4 && Left is SnailfishLiteral left && Right is SnailfishLiteral right)
+            if (history.Count() >= 4 && Left is SnailfishLiteral left && Right is SnailfishLiteral right)
             {
-                var leftTarget = parents.FirstOrDefault(p => p.Left is SnailfishLiteral);
-                var rightTarget = parents.FirstOrDefault(p => p.Right is SnailfishLiteral);
+                var leftTarget = history.FirstOrDefault(p => p.Item1.Left is SnailfishLiteral);
+                var rightTarget = history.FirstOrDefault(p => p.Item1.Right is SnailfishLiteral);
 
-                if (leftTarget?.Left is SnailfishLiteral leftLiteral) leftTarget.Left = leftLiteral + left;
-                if (rightTarget?.Right is SnailfishLiteral rightLiteral) rightTarget.Right = rightLiteral + right;
+                if (leftTarget.Item1?.Left is SnailfishLiteral leftLiteral) leftTarget.Item1.Left = leftLiteral + left;
+                if (rightTarget.Item1?.Right is SnailfishLiteral rightLiteral) rightTarget.Item1.Right = rightLiteral + right;
 
-                if (side == -1) parents.First().Left = new SnailfishLiteral(0);
-                else if (side == 1) parents.First().Right = new SnailfishLiteral(0);
+                var (parent, side) = history.First();
+
+                if (side == -1) parent.Left = new SnailfishLiteral(0);
+                else if (side == 1) parent.Right = new SnailfishLiteral(0);
                 else throw new ApplicationException();
 
                 return true;
             }
 
-            return Left!.TryExplode(parents.Push(this), -1)
-                || Right!.TryExplode(parents.Push(this), 1);
+            return Left!.TryExplode(history.Push((this, -1)))
+                || Right!.TryExplode(history.Push((this, 1)));
         }
 
         public bool TrySplit()
         {
-            return TrySplit(ImmutableStack<SnailfishOperator>.Empty, 0);
+            return TrySplit(ImmutableStack<(SnailfishOperator, int)>.Empty);
         }
 
-        public bool TrySplit(ImmutableStack<SnailfishOperator> parents, int side)
+        public bool TrySplit(ImmutableStack<(SnailfishOperator, int)> history)
         {
-            return Left!.TrySplit(parents.Push(this), -1)
-                || Right!.TrySplit(parents.Push(this), 1);
+            return Left!.TrySplit(history.Push((this, -1)))
+                || Right!.TrySplit(history.Push((this, 1)));
         }
     }
 }
