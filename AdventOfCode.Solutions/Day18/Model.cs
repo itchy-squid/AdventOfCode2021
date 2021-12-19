@@ -114,17 +114,48 @@ namespace AdventOfCode.Solutions.Day18
             return TryExplode(ImmutableStack<(SnailfishOperator, int)>.Empty);
         }
 
-        private (SnailfishOperator?, int) FindLeftOrDefault(ImmutableStack<(SnailfishOperator, int)> history)
+        private static (SnailfishOperator?, int) FindLeftOrDefault(ImmutableStack<(SnailfishOperator, int)> history)
         {
-            //var (parent, side) = history.FirstOrDefault();
+            var (parent, side) = history.FirstOrDefault();
+            if (parent == null) return (null, 0);
 
-            var leftTarget = history.FirstOrDefault(p => p.Item1.Left is SnailfishLiteral);
-            return (leftTarget.Item1, -1);
+            if (side == -1) return FindLeftOrDefault(history.Pop());
+            if (side != 1) throw new ApplicationException();
+
+            if (parent.Left is SnailfishLiteral) return (parent, -1);
+            else
+            {
+                var curr = parent.Left as SnailfishOperator;
+                while (curr != null)
+                {
+                    if (curr.Right is SnailfishLiteral) return (curr, 1);
+                    curr = curr.Right as SnailfishOperator;
+                }
+            }
+
+            return (null, 0);
         }
-        private (SnailfishOperator?, int) FindRightOrDefault(ImmutableStack<(SnailfishOperator, int)> history)
+
+        private static (SnailfishOperator?, int) FindRightOrDefault(ImmutableStack<(SnailfishOperator, int)> history)
         {
-            var rightTarget = history.FirstOrDefault(p => p.Item1.Right is SnailfishLiteral);
-            return (rightTarget.Item1, 1);
+            var (parent, side) = history.FirstOrDefault();
+            if (parent == null) return (null, 0);
+
+            if (side == 1) return FindRightOrDefault(history.Pop());
+            if (side != -1) throw new ApplicationException();
+
+            if (parent.Right is SnailfishLiteral) return (parent, 1);
+            else
+            {
+                var curr = parent.Right as SnailfishOperator;
+                while (curr != null)
+                {
+                    if (curr.Left is SnailfishLiteral) return (curr, -1);
+                    curr = curr.Left as SnailfishOperator;
+                }
+            }
+
+            return (null, 0);
         }
 
         public bool TryExplode(ImmutableStack<(SnailfishOperator, int)> history)
@@ -138,10 +169,7 @@ namespace AdventOfCode.Solutions.Day18
                 if (rightTarget?[rightSide] is SnailfishLiteral rightLiteral) rightTarget[rightSide] = rightLiteral + right;
 
                 var (parent, side) = history.First();
-
-                if (side == -1) parent.Left = new SnailfishLiteral(0);
-                else if (side == 1) parent.Right = new SnailfishLiteral(0);
-                else throw new ApplicationException();
+                parent[side] = new SnailfishLiteral(0);
 
                 return true;
             }
