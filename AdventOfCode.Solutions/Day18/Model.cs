@@ -94,6 +94,19 @@ namespace AdventOfCode.Solutions.Day18
 
         public int Magnitude() => (3 * Left!.Magnitude()) + (2 * Right!.Magnitude());
 
+        public static SnailfishOperator operator +(SnailfishOperator a, ISnailfishNumber b)
+        {
+            var result = new SnailfishOperator()
+            {
+                Left = a,
+                Right = b
+            };
+
+            while (result.TryExplode() || result.TrySplit()) ;
+
+            return result;
+        }
+
         public bool TryExplode()
         {
             return TryExplode(ImmutableStack<(SnailfishOperator, int)>.Empty);

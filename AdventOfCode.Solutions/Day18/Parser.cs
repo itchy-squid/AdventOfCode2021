@@ -28,10 +28,10 @@ namespace AdventOfCode.Solutions.Day18
             return curr!;
         }
 
-        public static ISnailfishNumber Parse(string line)
+        public static SnailfishOperator Parse(string line)
         {
             var stack = new Stack<(SnailfishOperator, int)>();
-            ISnailfishNumber? head = null;
+            SnailfishOperator? head = null;
 
             foreach (char c in line)
             {

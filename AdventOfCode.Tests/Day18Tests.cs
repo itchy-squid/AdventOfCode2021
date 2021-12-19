@@ -87,7 +87,7 @@ namespace AdventOfCode.Tests
         [Fact]
         public void ProgramSolve_Problem1()
         {
-            var result = Program.Solve(_input4.SplitLines());
+            var result = Program.Problem1Solve(_input4.SplitLines());
             Assert.Equal(4140, result);
         }
 

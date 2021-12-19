@@ -1,10 +1,4 @@
 ﻿using AdventOfCode.Solutions.Tools;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode.Solutions.Day18
 {
@@ -14,14 +8,21 @@ namespace AdventOfCode.Solutions.Day18
         {
             var lines = Input.ReadAllLines("Day18");
 
-            var result1 = Solve(lines);
+            var result1 = Problem1Solve(lines);
             Console.WriteLine(result1);
             Console.WriteLine();
         }
 
-        public static int Solve(IEnumerable<string> lines)
+        public static int Problem1Solve(IEnumerable<string> lines)
         {
-            return Parser.Parse(lines).Magnitude();
+            var models = lines.Select(line => Parser.Parse(line));
+            var result = models.Aggregate((a, b) => a + b);
+            return result.Magnitude();
         }
+
+        //public static int Problem2Solve(IEnumerable<string> lines)
+        //{
+        //    var models = lines.Select(line => Parser.Parse(line));
+        //}
     }
 }
