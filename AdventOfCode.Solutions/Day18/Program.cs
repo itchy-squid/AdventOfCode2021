@@ -24,14 +24,15 @@ namespace AdventOfCode.Solutions.Day18
             return result.Magnitude();
         }
 
-        public static int Problem2Solve(IEnumerable<string> lines)
+        public static int Problem2Solve(IEnumerable<string> linesEnumerable)
         {
-            var result = lines.Select(aLine => Parser.Parse(aLine))
+            var lines = linesEnumerable.ToList();
+            var result = lines
                 .SelectMany((a, i) =>
                 {
-                    return lines.Where((bLine, j) => j != i)
-                        .Select(bLine => Parser.Parse(bLine))
-                        .Select(b => a + b)
+                    return lines.Where((_, j) => j != i)
+                        .Select(b => (Parser.Parse(a), Parser.Parse(b)))
+                        .Select(pair => pair.Item1 + pair.Item2)
                         .Select(s => (s, s.Magnitude()));
                 })
                 .MaxBy(tuple => tuple.Item2);
