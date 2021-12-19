@@ -12,8 +12,15 @@ namespace AdventOfCode.Tests
         [Fact]
         public void ProgramSolve_Problem1()
         {
-            var result = Program.Solve(_input);
+            var result = Program.Solve(_input, Program.Problem1);
             Assert.Equal(45, result);
+        }
+
+        [Fact]
+        public void ProgramSolve_Problem2()
+        {
+            var result = Program.Solve(_input, Program.Problem2);
+            Assert.Equal(112, result);
         }
     }
 }
