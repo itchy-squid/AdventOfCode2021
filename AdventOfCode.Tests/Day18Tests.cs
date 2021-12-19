@@ -58,6 +58,17 @@ namespace AdventOfCode.Tests
             Assert.Equal(expected, model.ToString());
         }
 
+        [Fact]
+        public void SnailfishAdd()
+        {
+            var a = Parser.Parse("[[2,[[7,7],7]],[[5,8],[[9,3],[0,2]]]]");
+            var b = Parser.Parse("[[[0,[5,8]],[[1,7],[9,6]]],[[4,[1,2]],[[1,4],2]]]");
+            var result = a + b;
+
+            Assert.Equal("[[[[7,8],[6,6]],[[6,0],[7,7]]],[[[7,8],[8,8]],[[7,9],[0,6]]]]", result.ToString());
+            Assert.Equal(3993, result.Magnitude());
+        }
+
         [Theory]
         [InlineData("[[[[[9,8],1],2],3],4]", "[[[[0,9],2],3],4]")]
         [InlineData("[7,[6,[5,[4,[3,2]]]]]", "[7,[6,[5,[7,0]]]]")]
@@ -85,18 +96,17 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
-        public void ProgramSolve_Problem1()
+        public void ProgramProblem1Solve()
         {
             var result = Program.Problem1Solve(_input4.SplitLines());
             Assert.Equal(4140, result);
         }
 
-        //[Fact]
-        //public void SolverSolve_Problem2()
-        //{
-        //    var (win, hits) = Solver.Solve(moves, boards, Program.Problem2);
-        //    Assert.Equal(1924, win * hits);
-        //}
-
+        [Fact]
+        public void ProgramProblem2Solve()
+        {
+            var result = Program.Problem2Solve(_input4.SplitLines());
+            Assert.Equal(3993, result);
+        }
     }
 }
