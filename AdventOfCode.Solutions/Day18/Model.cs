@@ -76,6 +76,29 @@ namespace AdventOfCode.Solutions.Day18
 
     public class SnailfishOperator : ISnailfishNumber
     {
+        public ISnailfishNumber this[int key]
+        {
+            get 
+            {
+                return key switch
+                {
+                    -1 => Left!,
+                    1 => Right!,
+                    _ => throw new ApplicationException()
+                };
+            }
+
+            set
+            {
+                switch (key)
+                {
+                    case -1: Left = value; break;
+                    case 1: Right = value; break;
+                    default: throw new ApplicationException();
+                };
+            }
+        }
+
         public ISnailfishNumber? Left { get; set; }
         public ISnailfishNumber? Right { get; set; }
 
@@ -91,15 +114,28 @@ namespace AdventOfCode.Solutions.Day18
             return TryExplode(ImmutableStack<(SnailfishOperator, int)>.Empty);
         }
 
+        private (SnailfishOperator?, int) FindLeftOrDefault(ImmutableStack<(SnailfishOperator, int)> history)
+        {
+            //var (parent, side) = history.FirstOrDefault();
+
+            var leftTarget = history.FirstOrDefault(p => p.Item1.Left is SnailfishLiteral);
+            return (leftTarget.Item1, -1);
+        }
+        private (SnailfishOperator?, int) FindRightOrDefault(ImmutableStack<(SnailfishOperator, int)> history)
+        {
+            var rightTarget = history.FirstOrDefault(p => p.Item1.Right is SnailfishLiteral);
+            return (rightTarget.Item1, 1);
+        }
+
         public bool TryExplode(ImmutableStack<(SnailfishOperator, int)> history)
         {
             if (history.Count() >= 4 && Left is SnailfishLiteral left && Right is SnailfishLiteral right)
             {
-                var leftTarget = history.FirstOrDefault(p => p.Item1.Left is SnailfishLiteral);
-                var rightTarget = history.FirstOrDefault(p => p.Item1.Right is SnailfishLiteral);
+                var (leftTarget, leftSide) = FindLeftOrDefault(history);
+                var (rightTarget, rightSide) = FindRightOrDefault(history);
 
-                if (leftTarget.Item1?.Left is SnailfishLiteral leftLiteral) leftTarget.Item1.Left = leftLiteral + left;
-                if (rightTarget.Item1?.Right is SnailfishLiteral rightLiteral) rightTarget.Item1.Right = rightLiteral + right;
+                if (leftTarget?[leftSide] is SnailfishLiteral leftLiteral) leftTarget[leftSide] = leftLiteral + left;
+                if (rightTarget?[rightSide] is SnailfishLiteral rightLiteral) rightTarget[rightSide] = rightLiteral + right;
 
                 var (parent, side) = history.First();
 

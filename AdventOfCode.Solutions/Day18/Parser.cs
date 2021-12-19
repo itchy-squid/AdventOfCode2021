@@ -39,21 +39,28 @@ namespace AdventOfCode.Solutions.Day18
                 {
                     case '[':
                         {
-                            var curr = stack.FirstOrDefault();
                             var child = new SnailfishOperator();
 
-                            AssignChild(curr, child);
-
+                            var (parent, parentSide) = stack.FirstOrDefault();
+                            if (parent != null)
+                            {
+                                parent[parentSide] = child;
+                            }
+                            
                             stack.Push((child, -1));
                             break;
                         }
 
                     case char _ when c >= '0' && c <= '9':
                         {
-                            var curr = stack.FirstOrDefault();
                             var child = new SnailfishLiteral(c.ToInt());
 
-                            AssignChild(curr, child);
+                            var (parent, parentSide) = stack.FirstOrDefault();
+                            if (parent != null)
+                            {
+                                parent[parentSide] = child;
+                            }
+
                             break;
                         }
 
@@ -73,18 +80,6 @@ namespace AdventOfCode.Solutions.Day18
             }
 
             return head!;
-        }
-
-        private static void AssignChild((SnailfishOperator, int) curr, ISnailfishNumber child)
-        {
-            var (parent, parentSide) = curr;
-
-            if (parent != null)
-            {
-                if (parentSide == -1) parent.Left = child;
-                else if (parentSide == 1) parent.Right = child;
-                else throw new ApplicationException();
-            }
         }
     }
 }
